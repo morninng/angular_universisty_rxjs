@@ -13,25 +13,15 @@ import {LessonsService , Lesson} from './services/lessons.service';
 })
 export class AppComponent {
   title = 'app works!';
-  
-  lessons : Lesson[];
+
+  /* typescript のGeneric
+  https://www.typescriptlang.org/docs/handbook/generics.html*/
+
+  lessons$ : Observable<Lesson[]>;
 
   constructor( private lesson_service :LessonsService){
 
-    const lesson$ = this.lesson_service.loadLesson();
-
-    lesson$.subscribe(
-      (res)=>{
-        console.log(res);
-        this.lessons = res.json();
-      },
-      (error)=>{
-        console.log(error.message);
-      },
-      ()=>{
-        console.log("completed");
-      }
-    )
+    this.lessons$ = this.lesson_service.loadLesson();
 
   }
 

@@ -2,7 +2,17 @@
   {{title}}
 </h1>
 <ul>
-  <li *ngFor="let lesson of lessons">
+   <!--
+    https://angular.io/docs/ts/latest/guide/pipes.html
+     The AsyncPipe accepts a Promise or Observable 
+     as input and subscribes to the input automatically,
+      eventually returning the emitted value(s).
+      ViewがServiceの変更に即座にReactする仕組みとして async pipeを用いる。
+      asyncを用いることで、Viewの中でObservableのデータをsubscribeすることができるようになる。
+     
+     ここで、lessons$はobservableなので、普通のArray型のようには使えない。
+   　 async pipeをつけるこおにより、observableをsubscribeし、取得したResをngForに渡す。-->
+  <li *ngFor="let lesson of lessons$ | async">
     {{lesson.name}} {{lesson.context}}
   </li>
 </ul>

@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Http, Response } from '@angular/http';
-import { Observable }     from 'rxjs/Observable';
+import { Observable }     from 'rxjs/Rx';
+import 'rxjs/add/operator/map';
 
 @Injectable()
 export class LessonsService {
@@ -10,7 +11,9 @@ export class LessonsService {
 
 
   loadLesson(){
-    return this.http.get('http://cxense.webdemo.dac.co.jp:3000/test/lesson');
+    return this.http.get('http://cxense.webdemo.dac.co.jp:3000/test/lesson').map((res)=>{
+      return res.json();
+    })
   }
 
 }
