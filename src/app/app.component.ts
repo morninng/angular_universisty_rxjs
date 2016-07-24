@@ -23,6 +23,7 @@ export class AppComponent {
     lesson$.subscribe(
       (res)=>{
         console.log(res);
+        this.lessons = res.json();
       },
       (error)=>{
         console.log(error.message);
@@ -30,7 +31,6 @@ export class AppComponent {
       ()=>{
         console.log("completed");
       }
-
     )
 
   }
