@@ -16,3 +16,10 @@
     {{lesson.name}} {{lesson.context}}
   </li>
 </ul>
+
+Add lesson
+<form (ngSubmit) = "onSubmit()">
+<input placeholder="lesson name" #lesson_name>
+<input  placeholder="lesson context" #lesson_context>
+<input type="button" value="submit" (click)="button_click(lesson_name.value, lesson_context.value)">
+</form>
