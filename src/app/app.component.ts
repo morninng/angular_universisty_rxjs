@@ -26,15 +26,16 @@ export class AppComponent {
   }
 
   button_click = function(lesson_name, lesson_context){
+
     console.log(lesson_name, lesson_context);
     this.lesson_service.createLesson(lesson_name, lesson_context)
           .subscribe(
             ()=>{
-              console.log("lesson saved successfully");
+              console.log("lesson saved successfully :component");
               this.lessons$ = this.lesson_service.loadLesson();
           },
             (err) => {console.log(err)},
-            ()=>{console.log("completed")}
+            ()=>{console.log("completed : component")}
           );
   }
     
