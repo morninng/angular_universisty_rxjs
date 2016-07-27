@@ -1,6 +1,8 @@
-import { Component } from '@angular/core';
-import { Http, Response } from '@angular/http'
+import { Component , AfterViewInit } from '@angular/core';
+import { Http, Response } from '@angular/http';
+
 import { Observable }     from 'rxjs/Observable';
+import 'rxjs/add/operator/switchMap';
 
 import {LessonsService , Lesson} from './services/lessons.service';
 
@@ -11,21 +13,59 @@ import {LessonsService , Lesson} from './services/lessons.service';
   styleUrls: ['app.component.css'],
   providers:[LessonsService]
 })
-export class AppComponent {
+export class AppComponent implements AfterViewInit{
   title = 'app works!';
 
   /* typescript のGeneric
-  https://www.typescriptlang.org/docs/handbook/generics.html*/
+  https://www.typescriptlang.org/docs/handbook/generics.html
+  */
 
   lessons$ : Observable<Lesson[]>;
-
   Fixedlessons$ : Observable<Lesson[]>;
+  FilteredLesson_arr : Lesson[];
+
+
+
 
   constructor( private lesson_service :LessonsService){
 
     this.lessons$ = this.lesson_service.loadLesson();
     this.Fixedlessons$ = this.lesson_service.loadFixedLesson();
+  
+  }
 
+
+
+/* https://angular.io/docs/ts/latest/guide/lifecycle-hooks.html
+  コード内部に、dom を参照するdocument.getelementbyidがあるので、
+  componentのViewができたあとに走るLifeCycleHookのngafterViewInitを用いる。
+  Componentのclassに implements AfterViewInit　を付与する。
+*/
+  ngAfterViewInit(){  
+    const filter_input = document.getElementById("filter_input").getElementsByTagName("input")[0];
+    const search$ = Observable.fromEvent(filter_input, "keyup")
+          .do(()=>{
+             console.log(filter_input.value)
+          })
+          .switchMap(()=>{
+            return this.lesson_service.LoadFilteredLesson(filter_input.value);
+          })
+    /*switchmapを用いることで、連続してキーボードを押されたときに、
+    Nextに届く前のものは廃棄され、最後のものだけが評価され、onNextに渡る。
+    Networkをみて、リクエストがキャンセルされていることを確認するべし。
+    内部動作てきには、unsubscribeされているのと同じ動作かと思われる。 */
+
+
+    search$.subscribe(
+      (lesson_arr)=>{
+        this.FilteredLesson_arr = lesson_arr
+        console.log("next")
+      },
+      (err)=>{console.log(err)},
+      ()=>{
+        console.log("completed");
+       }
+    )
   }
 
 
@@ -73,5 +113,7 @@ export class AppComponent {
                 }
               );
   }
+
+
 
 }

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Http, Response, Headers , RequestOptions } from '@angular/http';
+import { Http, Response, Headers , RequestOptions, URLSearchParams } from '@angular/http';
 import { Observable }     from 'rxjs/Rx';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/cache';
@@ -27,11 +27,24 @@ export class LessonsService {
             .retryWhen(error => error.delay(500))
             .cache(1)
             .map((res)=>{
-              this.all_lessons = res.json()
-              console.log("lesson has been loaded", this.all_lessons);
-              return this.all_lessons;
+              console.log("fixed lesson has been loaded");
+              return res.json();
             })
   }
+
+  LoadFilteredLesson(search : string  = ""){
+
+    let params : URLSearchParams = new URLSearchParams();
+    params.set("search", search);
+
+
+    return this.http.get('http://cxense.webdemo.dac.co.jp:3000/test/FilteredLesson', {search:params})
+      .cache(1)
+      .map((res)=>{
+      return res.json();
+    })
+  }
+
 
 
   get_all_lessons() : Lesson[]{

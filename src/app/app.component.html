@@ -37,8 +37,14 @@ Fixed Lesson to check the failure
   </ul>
   <input type="button" (click)="reload_fixed_lesson()" value = "reload fixed data">
 
-
+<br><br><br>
 Filtered Lesson 
 
-<input type="text" placeholder="filter by name">
 <!-- 入力文字列の部分一致で名前があったものを検索。ここで、文字を高速で入力した場合には最後だけを処理するようにする。 -->
+<span id="filter_input">
+<input type="text" placeholder="filter by name">
+</span>
+
+  <ul *ngFor="let lesson of FilteredLesson_arr">
+    <li>{{lesson.name}} |  {{lesson.context}}</li>
+  </ul>
