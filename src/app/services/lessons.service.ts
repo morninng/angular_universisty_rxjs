@@ -3,6 +3,7 @@ import { Http, Response, Headers , RequestOptions } from '@angular/http';
 import { Observable }     from 'rxjs/Rx';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/cache';
+import 'rxjs/add/operator/retryWhen';
 
 @Injectable()
 export class LessonsService {
@@ -20,6 +21,18 @@ export class LessonsService {
       return this.all_lessons;
     })
   }
+
+  loadFixedLesson(){
+    return this.http.get('http://cxense.webdemo.dac.co.jp:3000/test/lesson_sometime_fail')
+            .retryWhen(error => error.delay(500))
+            .cache(1)
+            .map((res)=>{
+              this.all_lessons = res.json()
+              console.log("lesson has been loaded", this.all_lessons);
+              return this.all_lessons;
+            })
+  }
+
 
   get_all_lessons() : Lesson[]{
     return this.all_lessons;

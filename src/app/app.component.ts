@@ -19,18 +19,19 @@ export class AppComponent {
 
   lessons$ : Observable<Lesson[]>;
 
+  Fixedlessons$ : Observable<Lesson[]>;
+
   constructor( private lesson_service :LessonsService){
 
     this.lessons$ = this.lesson_service.loadLesson();
+    this.Fixedlessons$ = this.lesson_service.loadFixedLesson();
 
   }
 
-  reflesh_form = function(){
-    //lesson_context.value
 
-
+  reload_fixed_lesson = function(){
+    this.Fixedlessons$ = this.lesson_service.loadFixedLesson();
   }
-
 
   button_click = function(lesson_name, lesson_context){
 
@@ -71,7 +72,6 @@ export class AppComponent {
                   */
                 }
               );
-
   }
 
 }
