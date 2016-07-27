@@ -7,17 +7,32 @@ import 'rxjs/add/operator/cache';
 @Injectable()
 export class LessonsService {
 
+  all_lessons : Lesson[]; 
+
   constructor(private http: Http) {
   }
 
 
   loadLesson(){
-    return this.http.get('http://cxense.webdemo.dac.co.jp:3000/test/lesson_all').map((res)=>{
-      return res.json();
+    return this.http.get('http://cxense.webdemo.dac.co.jp:3000/test/lesson_all').cache(1).map((res)=>{
+      this.all_lessons = res.json()
+      console.log("lesson has been loaded", this.all_lessons);
+      return this.all_lessons;
     })
   }
 
+  get_all_lessons() : Lesson[]{
+    return this.all_lessons;
+  }
+
   createLesson(name, context){
+
+    if(!name || !context){
+      let empty_observable = Observable.empty();
+      console.log("no name or no context");
+      return empty_observable;
+    }
+
     let lesson_json = {name: name, context: context};
     let lesson_str = JSON.stringify(lesson_json);　
     let headers = new Headers({'Content-Type': 'application/json'});
@@ -30,14 +45,34 @@ export class LessonsService {
  cache オペレータを用いると、二度の無駄なPostRequestは実行されず、一回になる。
 　ただし、Subscribe後に実行されるnextとcompleteは両方ともよばれる。
 */ 
-
-
     network$.subscribe(
-      () =>{console.log("post request succeed : service")},
-      null,
-      ()=>{console.log("complete: service")}
+      () =>{console.log("create lesson succeed : service")},
+      (error) => {console.log("create lesson error" + error)},
+      ()=>{console.log("create lesson complete: service")}
     )
+    return network$;
+  }
 
+  deleteLesson(name_arr : string[]){
+
+    if(!Array.isArray(name_arr) || name_arr.length == 0){
+      let empty_observable = Observable.empty();
+      console.log("no item to delete");
+      return empty_observable;
+    }
+
+
+    let delete_lesson_str = JSON.stringify(name_arr);　
+    let headers = new Headers({'Content-Type': 'application/json'});
+    let options = new RequestOptions({headers: headers});
+    let req_url = "http://cxense.webdemo.dac.co.jp:3000/test/lesson?name_arr=" + delete_lesson_str;
+
+    const network$ = this.http.delete(req_url, options).cache(1);;
+    network$.subscribe(
+      () =>{console.log("delete lesson succeed : service")},
+      (error)=>{console.log("delete lesson error", error)},
+      ()=>{console.log("delete lesson complete: service")}
+    )
     return network$;
   }
 
@@ -45,6 +80,7 @@ export class LessonsService {
 
 
 export interface Lesson {
+  id : string,
   name : string,
   context : string
 }

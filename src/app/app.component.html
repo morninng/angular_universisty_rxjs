@@ -1,7 +1,13 @@
 <h1>
   {{title}}
 </h1>
-<ul>
+
+<input type="text" placeholder="filter by name">
+<!-- 入力文字列の部分一致で名前があったものを検索。ここで、文字を高速で入力した場合には最後だけを処理するようにする。 -->
+
+<form name="lesson_form">
+
+<table>
    <!--
     https://angular.io/docs/ts/latest/guide/pipes.html
      The AsyncPipe accepts a Promise or Observable 
@@ -12,14 +18,15 @@
      
      ここで、lessons$はobservableなので、普通のArray型のようには使えない。
    　 async pipeをつけるこおにより、observableをsubscribeし、取得したResをngForに渡す。-->
-  <li *ngFor="let lesson of lessons$ | async">
-    {{lesson.name}} {{lesson.context}}
-  </li>
-</ul>
+   <tr><th>name</th><th>context</th><th>delete</th></tr>
+  <tr *ngFor="let lesson of lessons$ | async">
+    <td>{{lesson.name}}</td> <td> {{lesson.context}}</td><td><span id="lesson_{{lesson.id}}" ><input type="checkbox"></span></td>
+  </tr>
+</table>
 
-Add lesson
-<form (ngSubmit) = "onSubmit()">
-<input placeholder="lesson name" #lesson_name>
-<input  placeholder="lesson context" #lesson_context>
-<input type="button" value="submit" (click)="button_click(lesson_name.value, lesson_context.value)">
+
+  Add lesson<br>
+<input placeholder="lesson name 1" #lesson_name> <input  placeholder="lesson context 1" #lesson_context>
+
+<input type="button" value="submit" (click)="button_click(lesson_name.value, lesson_context.value); lesson_context.value = null;lesson_name.value = null; ">
 </form>
